@@ -1,0 +1,16 @@
+registry_address:
+  type: string
+  default: http://localhost:5000
+git_credentials:
+  type: object
+  properties:
+    username:
+      type: string
+    access_token:
+      type: string
+  default:
+    username: username
+    access_token: access_token
+verbose:
+  type: boolean
+  default: false

@@ -1,0 +1,59 @@
+dist
+node_modules
+
+   The push refers to repository [192.168.0.26:5000/mu_server]                                      |
+ |                                                                                                    |
+ |   69b87416030d:                                                                                    |
+ |   Preparing                                                                                        |
+ |   a8c6eb333f26: Preparing                                                                          |
+ |   859b8030d18d: Preparing                                                                          |
+ |   8c103f69ff7f: Preparing                                                                          |
+ |   e5a27580a574: Preparing                                                                          |
+ |   cb591dd771d8: Preparing                                                                          |
+ |   488ed91819d9: Preparing                                                                          |
+ |   7e98a34e8d5d: Preparing                                                                          |
+ |   59c677849659: Preparing                                                                          |
+ |   b485c6cd33a6: Preparing                                                                          |
+ |   6aa872026017: Preparing                                                                          |
+ |   43ba18a5eaf8: Preparing                                                                          |
+ |   ff61a9b258e5: Preparing                                                                          |
+ |   cb591dd771d8: Waiting                                                                            |
+ |   488ed91819d9: Waiting                                                                            |
+ |   7e98a34e8d5d: Waiting                                                                            |
+ |   59c677849659: Waiting                                                                            |
+ |   b485c6cd33a6: Waiting                                                                            |
+ |   6aa872026017: Waiting                                                                            |
+ |   43ba18a5eaf8: Waiting                                                                            |
+ |   ff61a9b258e5: Waiting                                                                            |
+ |                                                                                                    |
+ |   e5a27580a574:                                                                                    |
+ |   Layer already exists                                                                             |
+ |                                                                                                    |
+ |   8c103f69ff7f:                                                                                    |
+ |   Layer already exists                                                                             |
+ |   a8c6eb333f26: Layer already exists                                                               |
+ |   859b8030d18d: Layer already exists                                                               |
+ |                                                                                                    |
+ |   cb591dd771d8:                                                                                    |
+ |   Layer already exists                                                                             |
+ |                                                                                                    |
+ |   59c677849659:                                                                                    |
+ |   Layer already exists                                                                             |
+ |                                                                                                    |
+ |   488ed91819d9: Layer already exists                                                               |
+ |                                                                                                    |
+ |   7e98a34e8d5d: Layer already exists                                                               |
+ |                                                                                                    |
+ |   b485c6cd33a6: Layer already exists                                                               |
+ |                                                                                                    |
+ |   ff61a9b258e5: Layer already exists                                                               |
+ |   6aa872026017: Layer already exists                                                               |
+ |                                                                                                    |
+ |   43ba18a5eaf8: Layer already exists                                                               |
+ |                                                                                                    |
+ |   69b87416030d: Pushed                                                                             |
+ |                                                                                                    |
+ |   teste98: digest: sha256:d1b3afe0b14036fc2aeafee0a9e1777e2398a6fdc4e00b0be31f8813fe419742 size:   |
+ |    3052                                                                                            |
+ |                                                                                                    |
+ | [Successfully pushed mu_server:teste98]
