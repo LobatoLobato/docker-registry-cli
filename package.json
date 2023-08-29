@@ -1,6 +1,6 @@
 {
   "name": "@lobatolobato/docker-registry-cli",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "CLI for the docker registry v2",
   "main": "dist/bundle.js",
   "type": "module",
