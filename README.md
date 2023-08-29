@@ -9,7 +9,7 @@
 - [Usage](#usage)
 - [Project Status](#project-status)
 - [Room for Improvement](#room-for-improvement)
-* [Credits](#credits)
+- [Credits](#credits)
 
 ## General Information
 
