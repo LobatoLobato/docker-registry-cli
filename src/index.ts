@@ -52,15 +52,11 @@ while (true) {
     choices: [
       "List",
       !dockerEngineAvailable
-        ? chalk.dim("Push(Local Image) [Disabled: Docker Not Available]")
-        : "Push(Local Image)",
-      !dockerEngineAvailable
-        ? chalk.dim("Push(From GIT) [Disabled: Docker Not Available]")
-        : "Push(From GIT)",
+        ? chalk.dim("Push [Disabled: Docker Not Available]")
+        : "Push",
       !dockerEngineAvailable
         ? chalk.dim("Remove [Disabled: Docker Not Available]")
         : "Remove",
-      "Remove All Related Tags",
       "Config",
       "Test Connection",
       "Exit",
@@ -118,33 +114,84 @@ while (true) {
       });
       continue;
     }
-    if (option === "Push(Local Image)") {
-      const imageName = await app.prompt.input({
+    if (option === "Push") {
+      const source = await app.prompt.select({
+        choices: [
+          "Local Built Image",
+          "Dockerfile",
+          "Git Repository",
+          "Cancel",
+        ],
+        message: "Please select the image source",
+      });
+      if (source === "Cancel") continue;
+      const options = {
+        gitUrl: "",
+        dockerfilePath: "",
+      };
+
+      if (source === "Dockerfile") {
+        options.dockerfilePath = await app.prompt.input({
+          message: " Dockerfile path:",
+          line_width: CONSOLE_WIDTH,
+        });
+      }
+      if (source === "Git Repository") {
+        options.gitUrl = await app.prompt.input({
+          message: " Git Repository url:",
+          line_width: CONSOLE_WIDTH,
+        });
+      }
+
+      let imageName = await app.prompt.input({
         message: " Image name (repo:tag):",
         line_width: CONSOLE_WIDTH,
       });
 
+      imageName = imageName.replace(
+        `${registryHandler.registryAddressNoProtocol}/`,
+        ""
+      );
+      console.log(options);
+      const result = await registryHandler.pushImage(imageName, options);
+      app.pushLine("Repository: " + result.repository, "default");
+      app.pushLine("Tag: " + result.tag, "default");
+      app.pushLine("Digest: " + result.digest, "default");
+    }
+    if (option === "Push(Local Image)") {
+      let imageName = await app.prompt.input({
+        message: " Image name (repo:tag):",
+        line_width: CONSOLE_WIDTH,
+      });
+      imageName = imageName.replace(
+        `${registryHandler.registryAddressNoProtocol}/`,
+        ""
+      );
       const result = await registryHandler.pushImage(imageName);
       app.pushLine("Repository: " + result.repository, "default");
       app.pushLine("Tag: " + result.tag, "default");
       app.pushLine("Digest: " + result.digest, "default");
     }
-    if (option === "Push(From GIT)") {
-      const gitUrl = await app.prompt.input({
-        message: " Git Repository url:",
-        line_width: CONSOLE_WIDTH,
-      });
+    // if (option === "Push(From GIT)") {
+    //   const gitUrl = await app.prompt.input({
+    //     message: " Git Repository url:",
+    //     line_width: CONSOLE_WIDTH,
+    //   });
 
-      const imageName = await app.prompt.input({
-        message: " Image name (repo:tag):",
-        line_width: CONSOLE_WIDTH,
-      });
+    //   let imageName = await app.prompt.input({
+    //     message: " Image name (repo:tag):",
+    //     line_width: CONSOLE_WIDTH,
+    //   });
 
-      const result = await registryHandler.pushImage(imageName, gitUrl);
-      app.pushLine("Repository: " + result.repository, "default");
-      app.pushLine("Tag: " + result.tag, "default");
-      app.pushLine("Digest: " + result.digest, "default");
-    }
+    //   imageName = imageName.replace(
+    //     `${registryHandler.registryAddressNoProtocol}/`,
+    //     ""
+    //   );
+    //   const result = await registryHandler.pushImage(imageName, gitUrl);
+    //   app.pushLine("Repository: " + result.repository, "default");
+    //   app.pushLine("Tag: " + result.tag, "default");
+    //   app.pushLine("Digest: " + result.digest, "default");
+    // }
     if (option === "Remove") {
       const imageTag = await app.prompt.input({
         message: "Enter the image name and tag (name:tag):",

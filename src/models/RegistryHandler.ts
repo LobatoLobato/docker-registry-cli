@@ -76,13 +76,15 @@ export class RegistryHandler {
     return imageList;
   }
 
-  public async pushImage(taggedImage: string, gitUrl?: string) {
+  public async pushImage(
+    taggedImage: string,
+    options?: { gitUrl?: string; dockerfilePath?: string }
+  ) {
     const tempPath = path.join(TEMP_PATH, "build");
     const scopedTaggedImage = this.appendAddress(taggedImage, true);
 
-    if (!gitUrl) {
+    if (!options?.gitUrl && !options?.dockerfilePath) {
       this.stream?.write(`[Pushing ${taggedImage}]`);
-
       await docker.tag(taggedImage, scopedTaggedImage);
       const pushResult = await docker.push(scopedTaggedImage, {
         stream: this.verboseStream,
@@ -93,16 +95,27 @@ export class RegistryHandler {
 
       return pushResult;
     }
+    const { gitUrl, dockerfilePath } = options;
 
-    this.stream?.write(`[Cloning ${gitUrl}]`);
-    await git.clone(gitUrl, tempPath);
-    this.stream?.write(`[Successfully cloned ${gitUrl}]\n`);
+    if (gitUrl) {
+      this.stream?.write(`[Cloning ${gitUrl}]`);
+      await git.clone(gitUrl, tempPath);
+      this.stream?.write(`[Successfully cloned ${gitUrl}]\n`);
 
-    this.stream?.write(`[Building ${taggedImage}]`);
-    await docker.build(scopedTaggedImage, tempPath, {
-      stream: this.verboseStream,
-    });
-    this.stream?.write(`[Successfully built ${taggedImage}]\n`);
+      this.stream?.write(`[Building ${taggedImage}]`);
+      await docker.build(scopedTaggedImage, tempPath, {
+        stream: this.verboseStream,
+      });
+      this.stream?.write(`[Successfully built ${taggedImage}]\n`);
+    }
+
+    if (dockerfilePath) {
+      this.stream?.write(`[Building ${taggedImage}]`);
+      await docker.build(scopedTaggedImage, dockerfilePath, {
+        stream: this.verboseStream,
+      });
+      this.stream?.write(`[Successfully built ${taggedImage}]\n`);
+    }
 
     this.stream?.write(`[Pushing ${taggedImage}]`);
     const pushResult = await docker.push(scopedTaggedImage, {
@@ -150,10 +163,12 @@ export class RegistryHandler {
     const [imageName] = this.extractNameAndTag(taggedImage);
     const scopedTaggedImage = this.appendAddress(taggedImage, true);
 
+    this.stream?.write(` [Building dummy image]`);
     await docker.build(scopedTaggedImage, tempPath, {
       dummy: true,
       stream: this.verboseStream,
     });
+    this.stream?.write(` [Successfully built dummy image]`);
 
     rmSync(tempPath, {
       recursive: true,
@@ -162,10 +177,13 @@ export class RegistryHandler {
       maxRetries: 20,
     });
 
+    this.stream?.write(` [Pushing dummy image]`);
     const pushResult = await docker.push(scopedTaggedImage, {
       stream: this.verboseStream,
     });
+    this.stream?.write(` [Successfully pushed dummy image]`);
 
+    this.stream?.write(` [Untagging ${taggedImage}]`);
     await docker.rmi(scopedTaggedImage);
 
     await this.deleteImage(imageName, pushResult.digest);

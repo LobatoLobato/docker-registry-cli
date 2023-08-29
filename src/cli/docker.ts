@@ -95,7 +95,7 @@ export const docker = {
       preparing: multibar.create(0, 0, { stage: "Preparing: " }),
       waiting: multibar.create(0, 0, { stage: "Waiting:   " }),
       pushing: multibar.create(0, 0, { stage: "Pushing:   " }),
-    } as { [key: string]: cliProgress.SingleBar };
+    } as const;
 
     options?.stream?.cork();
 
@@ -107,20 +107,32 @@ export const docker = {
           const increment = strChunk.match(/Preparing/gi)?.length ?? 0;
 
           for (const key in bars) {
-            const bar = bars[key];
+            const bar = bars[key as keyof typeof bars];
             const newTotal = bar.getTotal() + increment;
             bar.setTotal(newTotal);
             if (key === "preparing") bar.update(newTotal);
           }
         }
-        if (strChunk.match(/Waiting/i)) {
-          const increment = strChunk.match(/Waiting/gi)?.length ?? 0;
-          bars["waiting"].increment(increment);
-        }
         if (strChunk.match(/Pushed|Layer/i)) {
           const increment = strChunk.match(/Pushed|Layer/gi)?.length ?? 0;
           bars["pushing"].increment(increment);
         }
+
+        if (strChunk.match(/Waiting/i)) {
+          const increment = strChunk.match(/Waiting/gi)?.length ?? 0;
+          const { pushing } = bars;
+          const { waiting } = bars;
+          const pushingValue = pushing.getProgress() * pushing.getTotal();
+          const waitingValue = waiting.getProgress() * waiting.getTotal();
+          const isLagging = pushingValue > waitingValue + increment;
+
+          if (isLagging) {
+            waiting.update(pushingValue);
+          } else {
+            waiting.increment(increment);
+          }
+        }
+
         options?.stream?.write(data);
         cb();
       },
