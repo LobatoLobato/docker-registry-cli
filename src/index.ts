@@ -152,46 +152,13 @@ while (true) {
         `${registryHandler.registryAddressNoProtocol}/`,
         ""
       );
-      console.log(options);
+
       const result = await registryHandler.pushImage(imageName, options);
       app.pushLine("Repository: " + result.repository, "default");
       app.pushLine("Tag: " + result.tag, "default");
       app.pushLine("Digest: " + result.digest, "default");
     }
-    if (option === "Push(Local Image)") {
-      let imageName = await app.prompt.input({
-        message: " Image name (repo:tag):",
-        line_width: CONSOLE_WIDTH,
-      });
-      imageName = imageName.replace(
-        `${registryHandler.registryAddressNoProtocol}/`,
-        ""
-      );
-      const result = await registryHandler.pushImage(imageName);
-      app.pushLine("Repository: " + result.repository, "default");
-      app.pushLine("Tag: " + result.tag, "default");
-      app.pushLine("Digest: " + result.digest, "default");
-    }
-    // if (option === "Push(From GIT)") {
-    //   const gitUrl = await app.prompt.input({
-    //     message: " Git Repository url:",
-    //     line_width: CONSOLE_WIDTH,
-    //   });
 
-    //   let imageName = await app.prompt.input({
-    //     message: " Image name (repo:tag):",
-    //     line_width: CONSOLE_WIDTH,
-    //   });
-
-    //   imageName = imageName.replace(
-    //     `${registryHandler.registryAddressNoProtocol}/`,
-    //     ""
-    //   );
-    //   const result = await registryHandler.pushImage(imageName, gitUrl);
-    //   app.pushLine("Repository: " + result.repository, "default");
-    //   app.pushLine("Tag: " + result.tag, "default");
-    //   app.pushLine("Digest: " + result.digest, "default");
-    // }
     if (option === "Remove") {
       const imageTag = await app.prompt.input({
         message: "Enter the image name and tag (name:tag):",
