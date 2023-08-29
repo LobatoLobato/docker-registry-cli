@@ -129,7 +129,10 @@ export class RegistryHandler {
     return pushResult;
   }
 
-  public async removeImage(taggedImage: string): Promise<void> {
+  public async removeImage(
+    taggedImage: string,
+    rmAllRelated?: boolean
+  ): Promise<void> {
     const [imageName, imageTag] = this.extractNameAndTag(taggedImage);
     const references = await this.getReferences(taggedImage);
     const imageDigest = references?.find(({ tag }) => tag === imageTag)?.digest;
@@ -141,6 +144,14 @@ export class RegistryHandler {
       error.message = `Image ${taggedImage} is not on this registry`;
 
       throw error;
+    }
+    if (references.length > 1 && rmAllRelated) {
+      this.stream?.write(`[Deleting ${taggedImage} and related tags]`);
+      await this.deleteImage(imageName, imageDigest);
+      this.stream?.write(
+        `[Successfully deleted ${taggedImage} and related tags]`
+      );
+      return;
     }
 
     // If image:tag exists, but other tags reference it, untag it

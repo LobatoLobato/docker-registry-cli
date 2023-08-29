@@ -163,7 +163,22 @@ while (true) {
       const imageTag = await app.prompt.input({
         message: "Enter the image name and tag (name:tag):",
       });
-      await registryHandler.removeImage(imageTag);
+
+      const type = await app.prompt.select({
+        choices: [
+          "Only the specified tag",
+          "The specified tag and all its related tags",
+          "Cancel",
+        ],
+        message: "Please select the removal type",
+      });
+      if (type === "Cancel") continue;
+      if (type === "Only the specified tag") {
+        await registryHandler.removeImage(imageTag);
+      }
+      if (type === "The specified tag and all its related tags") {
+        await registryHandler.removeImage(imageTag, true);
+      }
       continue;
     }
 
